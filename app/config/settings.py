@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str
     SECRET_KEY: str
 
+    DB_URL: str
     DB_HOST: str
     DB_PORT: str
     DB_USER: str

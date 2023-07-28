@@ -39,7 +39,7 @@ class Order(Base, TimestampMixin):
     bill: Mapped[Optional["Bill"]] = relationship(back_populates="orders")
 
     menus: Mapped[List["OrderMenu"]] = relationship(back_populates="order")
-    
+
     __table_args__ = (
         UniqueConstraint(
             'user_id', 'table_id', name='_unique_user_id_table_id'
