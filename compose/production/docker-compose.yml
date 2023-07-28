@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web-api:
+    build:
+      context: ../../.
+      dockerfile: ./compose/production/Dockerfile
+    container_name: web_api
+    env_file:
+      - ../../.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - 9000:80
