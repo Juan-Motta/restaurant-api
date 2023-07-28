@@ -1,6 +1,12 @@
-# Fast API Template
+# Restaurant API
 
-FastAPI blank template created to start any new project
+FastAPI project for managing a restaurant
+
+|VERSION            |DESCRIPTION                       |
+|-------------------|----------------------------------|
+|Python             |3.11                              |
+|Poetry             |1.4.2                             |
+|Postgres           |14.7                              |
 
 ## Setup
 
@@ -8,21 +14,28 @@ FastAPI blank template created to start any new project
 ```
 cp .env.example .env
 ```
+|VARIABLE            |DESCRIPTION                                            |
+|--------------------|-------------------------------------------------------|
+|APP_NAME            |Name of the app                                        |
+|APPLICATION_VERSION |Last version of the application                        |
+|APP_ENVIRONMENT     |Name of the application environment                    |
+|DEBUG               |Debug flag                                             |
+|LOG_LEVEL           |Defines the level of the logs that are shown in console|
+|SECRET_KEY          |Defines secret key for some features of the application|
+|DB_HOST             |Database host                                          |
+|DB_PORT             |Database port                                          |
+|DB_USER             |Database user                                          |
+|DB_PASSWORD         |Database password                                      |
+|DB_NAME             |Database name                                          |
 
 ## Run using docker-compose
 ```
-#Option 1
 docker-compose -f ./compose/develop/docker-compose.yml up --build
-
-#Option 2
-. ./scripts/start-docker-dev.sh
 ```
 
 ## Run using poetry
 ```
 poetry install
-```
-```
 poetry run sh ./scripts/start-dev.sh
 ```
 
