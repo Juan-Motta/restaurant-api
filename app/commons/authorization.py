@@ -1,10 +1,13 @@
-from jose import jwt
-from typing import List, Optional, Dict
-from app.config.settings import settings
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
+from typing import Dict, List, Optional
+
+from jose import jwt
+
+from app.config.settings import settings
 
 logger = logging.getLogger(__name__)
+
 
 @dataclass
 class Session:
@@ -12,25 +15,25 @@ class Session:
     permissions: List[str]
     session_type: str
     extra: Optional[Dict] = None
-    
+
 
 def authorize(authorization_header: str) -> Optional[Session]:
     if not authorization_header:
-        return None
+        raise Exception("Invalid authorization header")
 
     bearer, jwt_encode = authorization_header.split(" ")
 
-    if bearer == "Bearer" and jwt_encode:
-        jwt_decode = jwt.decode(
-            jwt_encode,
-            settings.SECRET_KEY,
-            algorithms=settings.JWT_ALGORITHMS,
-        )
-        return Session(
-            user_id=jwt_decode["user_id"],
-            permissions=jwt_decode["permissions"],
-            session_type=jwt_decode["session_type"],
-            extra=jwt_decode["extra"],
-        )
+    if not (bearer == "Bearer" and jwt_encode):
+        raise Exception("Invalid authorization header")
 
-    return None
+    jwt_decode = jwt.decode(
+        jwt_encode,
+        settings.SECRET_KEY,
+        algorithms=settings.JWT_ALGORITHMS,
+    )
+    return Session(
+        user_id=jwt_decode["user_id"],
+        permissions=jwt_decode["permissions"],
+        session_type=jwt_decode["session_type"],
+        extra=jwt_decode["extra"],
+    )
