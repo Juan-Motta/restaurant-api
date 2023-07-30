@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-
+from typing import List
 
 class Settings(BaseSettings):
     APP_NAME: str
@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASSWORD: str
     DB_NAME: str
+    
+    JWT_ALGORITHMS: List[str] = ["HS256"]
 
     class Config:
         env_file = ".env"
