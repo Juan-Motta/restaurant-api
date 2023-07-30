@@ -22,7 +22,7 @@ logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 Session: sessionmaker = sessionmaker(
-    autocommit=False, autoflush=False, bind=engine
+    autocommit=False, autoflush=True, bind=engine
 )
 
 Base = declarative_base()
