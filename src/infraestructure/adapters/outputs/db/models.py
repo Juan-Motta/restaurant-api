@@ -38,7 +38,7 @@ class CategoryTypologyEnum(Enum):
     MENU_ITEM = "MENU_ITEM"
 
 
-class Restaurant(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+class RestaurantModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "restaurants"
     name: Mapped[str] = mapped_column(sa.String(255))
     address: Mapped[str] = mapped_column(sa.String(255))
@@ -48,14 +48,18 @@ class Restaurant(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     longitude: Mapped[Decimal] = mapped_column(sa.Numeric(21, 11))
 
     category_id: Mapped[int] = mapped_column(sa.ForeignKey("categories.id"))
-    category: Mapped["Category"] = relationship(back_populates="restaurant")
+    category: Mapped["CategoryModel"] = relationship(
+        "CategoryModel", back_populates="restaurant"
+    )
 
-    menu_items: Mapped[list["MenuItem"]] = relationship(back_populates="restaurant")
-    users: Mapped[list["User"]] = relationship(back_populates="restaurant")
-    orders: Mapped[list["Order"]] = relationship(back_populates="restaurant")
+    menu_items: Mapped[list["MenuItemModel"]] = relationship(
+        back_populates="restaurant"
+    )
+    users: Mapped[list["UserModel"]] = relationship(back_populates="restaurant")
+    orders: Mapped[list["OrderModel"]] = relationship(back_populates="restaurant")
 
 
-class MenuItem(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+class MenuItemModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "menu_items"
     name: Mapped[str] = mapped_column(sa.String(255))
     description: Mapped[str] = mapped_column(sa.String(255))
@@ -65,16 +69,19 @@ class MenuItem(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     image_url: Mapped[str] = mapped_column(sa.String(255))
 
     category_id: Mapped[int] = mapped_column(sa.ForeignKey("categories.id"))
-    category: Mapped["Category"] = relationship(back_populates="menu_items")
+    category: Mapped["CategoryModel"] = relationship(
+        "CategoryModel", back_populates="menu_items"
+    )
 
     restaurant_id: Mapped[int] = mapped_column(sa.ForeignKey("restaurants.id"))
-    restaurant: Mapped["Restaurant"] = relationship(back_populates="menu_items")
+    restaurant: Mapped["RestaurantModel"] = relationship(back_populates="menu_items")
 
-    orders: Mapped[list["Order"]] = relationship(back_populates="restaurant")
-    order_items: Mapped[list["OrderItem"]] = relationship(back_populates="menu_item")
+    order_items: Mapped[list["OrderItemModel"]] = relationship(
+        back_populates="menu_item"
+    )
 
 
-class User(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+class UserModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "users"
     typology: Mapped[UserTypologyEnum] = mapped_column(
         sa.Enum(
@@ -92,14 +99,22 @@ class User(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     address: Mapped[str] = mapped_column(sa.String(255))
 
     restaurant_id: Mapped[int] = mapped_column(sa.ForeignKey("restaurants.id"))
-    restaurant: Mapped["Restaurant"] = relationship(back_populates="users")
+    restaurant: Mapped["RestaurantModel"] = relationship(back_populates="users")
 
-    orders: Mapped[list["Order"]] = relationship(back_populates="customer")
+    orders: Mapped[list["OrderModel"]] = relationship(back_populates="customer")
 
 
-class Order(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+class OrderModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "orders"
-    status: Mapped[str] = mapped_column(sa.String(25))
+    status: Mapped[OrderStatusEnum] = mapped_column(
+        sa.Enum(
+            OrderStatusEnum,
+            native_enum=False,
+            validate_strings=True,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        default=OrderStatusEnum.PENDING,
+    )
     total_amount: Mapped[Decimal] = mapped_column(sa.Numeric(10, 2))
     delivery_address: Mapped[str] = mapped_column(sa.String(255))
     special_instructions: Mapped[str] = mapped_column(sa.String(255))
@@ -108,24 +123,24 @@ class Order(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     )
 
     restaurant_id: Mapped[int] = mapped_column(sa.ForeignKey("restaurants.id"))
-    restaurant: Mapped["Restaurant"] = relationship(back_populates="orders")
+    restaurant: Mapped["RestaurantModel"] = relationship(back_populates="orders")
     customer_id: Mapped[int] = mapped_column(sa.ForeignKey("users.id"))
-    customer: Mapped["User"] = relationship(back_populates="orders")
+    customer: Mapped["UserModel"] = relationship(back_populates="orders")
 
-    rating: Mapped["Rating"] = relationship(back_populates="order")
-    order_items: Mapped[list["OrderItem"]] = relationship(back_populates="order")
+    rating: Mapped["RatingModel"] = relationship(back_populates="order")
+    order_items: Mapped[list["OrderItemModel"]] = relationship(back_populates="order")
 
 
-class Rating(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+class RatingModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "ratings"
     rating: Mapped[Decimal] = mapped_column(sa.Numeric(3, 2))
     comment: Mapped[str] = mapped_column(sa.String(255))
 
     order_id: Mapped[int] = mapped_column(sa.ForeignKey("orders.id"))
-    order: Mapped["Order"] = relationship(back_populates="ratings")
+    order: Mapped["OrderModel"] = relationship(back_populates="rating")
 
 
-class OrderItem(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+class OrderItemModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "order_items"
     quantity: Mapped[int]
     sub_total: Mapped[Decimal] = mapped_column(sa.Numeric(10, 2))
@@ -133,13 +148,13 @@ class OrderItem(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     notes: Mapped[str] = mapped_column(sa.String(255))
 
     order_id: Mapped[int] = mapped_column(sa.ForeignKey("orders.id"))
-    order: Mapped["Order"] = relationship(back_populates="order_items")
+    order: Mapped["OrderModel"] = relationship(back_populates="order_items")
 
     menu_item_id: Mapped[int] = mapped_column(sa.ForeignKey("menu_items.id"))
-    menu_item: Mapped["MenuItem"] = relationship(back_populates="order_items")
+    menu_item: Mapped["MenuItemModel"] = relationship(back_populates="order_items")
 
 
-class Category(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+class CategoryModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "categories"
     name: Mapped[str] = mapped_column(sa.String(100))
     description: Mapped[str] = mapped_column(sa.String(255))
@@ -153,5 +168,9 @@ class Category(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
         default=None,
     )
 
-    menu_items: Mapped[list["MenuItem"]] = relationship(back_populates="category")
-    restaurant: Mapped[list["Restaurant"]] = relationship(back_populates="category")
+    menu_items: Mapped[list["MenuItemModel"]] = relationship(
+        "MenuItemModel", back_populates="category"
+    )
+    restaurant: Mapped[list["RestaurantModel"]] = relationship(
+        "RestaurantModel", back_populates="category"
+    )

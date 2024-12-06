@@ -1,8 +1,8 @@
-"""Migration 06 12 2024
+"""Migration 06_12_2024
 
-Revision ID: b12f2b88bfbc
+Revision ID: 74a0d3c454b6
 Revises:
-Create Date: 2024-12-06 11:33:48.933152
+Create Date: 2024-12-06 16:23:49.674397
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "b12f2b88bfbc"
+revision: str = "74a0d3c454b6"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -152,7 +152,20 @@ def upgrade() -> None:
     )
     op.create_table(
         "orders",
-        sa.Column("status", sa.String(length=25), nullable=False),
+        sa.Column(
+            "status",
+            sa.Enum(
+                "PENDING",
+                "TAKEN",
+                "PACKAGING",
+                "IN_TRANSIT",
+                "DELIVERED",
+                "CANCELED",
+                name="orderstatusenum",
+                native_enum=False,
+            ),
+            nullable=False,
+        ),
         sa.Column("total_amount", sa.Numeric(precision=10, scale=2), nullable=False),
         sa.Column("delivery_address", sa.String(length=255), nullable=False),
         sa.Column("special_instructions", sa.String(length=255), nullable=False),
