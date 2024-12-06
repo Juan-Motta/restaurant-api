@@ -12,5 +12,5 @@ class RatingFactory(BaseFactory):
         model = RatingModel
 
     order = factory.SubFactory("tests.factories.order_factory.OrderFactory")
-    rating = round(Decimal(random.uniform(1, 10)), 2)
+    rating = factory.Faker("pydecimal", left_digits=2, right_digits=2, positive=True)
     comment = factory.Faker("text")

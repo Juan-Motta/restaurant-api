@@ -16,7 +16,7 @@ class RestaurantFactory(BaseFactory):
 
     name = factory.Faker("company")
     address = factory.Faker("address")
-    rating = round(Decimal(random.uniform(1, 5)), 2)
+    rating = factory.Faker("pydecimal", left_digits=2, right_digits=2, positive=True)
     status = factory.fuzzy.FuzzyChoice(
         choices=[status for status in RestaurantStatusEnum]
     )

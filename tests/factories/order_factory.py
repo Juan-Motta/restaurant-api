@@ -12,7 +12,9 @@ class OrderFactory(BaseFactory):
         model = OrderModel
 
     status = factory.fuzzy.FuzzyChoice(choices=[status for status in OrderStatusEnum])
-    total_amount = round(Decimal(random.uniform(1, 100000)), 2)
+    total_amount = factory.Faker(
+        "pydecimal", left_digits=4, right_digits=2, positive=True
+    )
     delivery_address = factory.Faker("address")
     special_instructions = factory.Faker("text")
     estimated_delivery_time = factory.Faker("date_time")

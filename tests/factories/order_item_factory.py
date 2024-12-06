@@ -14,6 +14,6 @@ class OrderItemFactory(BaseFactory):
     order = factory.SubFactory("tests.factories.order_factory.OrderFactory")
     menu_item = factory.SubFactory("tests.factories.menu_item_factory.MenuItemFactory")
     quantity = factory.Faker("random_number", digits=1)
-    sub_total = round(Decimal(random.uniform(1, 100000)), 2)
-    total = round(Decimal(random.uniform(1, 100000)), 2)
+    sub_total = factory.Faker("pydecimal", left_digits=4, right_digits=2, positive=True)
+    total = factory.Faker("pydecimal", left_digits=4, right_digits=2, positive=True)
     notes = factory.Faker("text")

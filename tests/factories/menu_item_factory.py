@@ -13,7 +13,7 @@ class MenuItemFactory(BaseFactory):
 
     name = factory.Faker("word")
     description = factory.Faker("text")
-    price = round(Decimal(random.uniform(1, 100000)), 2)
+    price = factory.Faker("pydecimal", left_digits=4, right_digits=2, positive=True)
     preparation_time = factory.Faker("random_number", digits=4)
     available = factory.Faker("boolean")
     image_url = factory.Faker("image_url")
