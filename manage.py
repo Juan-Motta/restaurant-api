@@ -1,3 +1,4 @@
+from datetime import datetime
 from subprocess import run
 
 import typer
@@ -12,11 +13,22 @@ def runserver(host: str = "0.0.0.0", port: int = 8000, reload: bool = False):
 
 
 @app.command()
-def makemigrations(): ...
+def makemigrations():
+    run(
+        [
+            "alembic",
+            "revision",
+            "--autogenerate",
+            "-m",
+            f"""Migration {datetime.now().strftime("%d_%m_%Y")}""",
+        ],
+        check=True,
+    )
 
 
 @app.command()
-def migrate(): ...
+def migrate():
+    run(["alembic", "upgrade", "head"], check=True)
 
 
 @app.command()
