@@ -1,5 +1,6 @@
 from sqlalchemy import func, select
-from sqlalchemy.orm import joinedload
+from sqlalchemy import update as sql_update
+from sqlalchemy.orm import Session, joinedload
 
 from src.domain.entities.restaurant import (
     RestaurantBase,
@@ -14,7 +15,7 @@ from src.infraestructure.adapters.outputs.db.models import (
 
 
 class RestaurantRepository(IRestaurantRepository):
-    def __init__(self, session):
+    def __init__(self, session: Session):
         self.session = session
 
     async def count_all(self):
@@ -64,6 +65,36 @@ class RestaurantRepository(IRestaurantRepository):
         self.session.add(restaurant_model)
         await self.session.commit()
         restaurant_model = await self.get_by_id(restaurant_model.id)
+        return RestaurantWithRelations.model_validate(
+            restaurant_model, from_attributes=True
+        )
+
+    async def update(
+        self, restaurant_id: int, restaurant: RestaurantBaseInput
+    ) -> RestaurantWithRelations:
+        execute_update = (
+            sql_update(RestaurantModel)
+            .where(RestaurantModel.id == restaurant_id)
+            .values(**restaurant.model_dump())
+            .execution_options(synchronize_session="fetch")
+        )
+        await self.session.execute(execute_update)
+        await self.session.commit()
+        restaurant_model = await self.get_by_id(restaurant_id)
+        return RestaurantWithRelations.model_validate(
+            restaurant_model, from_attributes=True
+        )
+
+    async def deactivate(self, restaurant_id: int) -> RestaurantWithRelations:
+        execute_update = (
+            sql_update(RestaurantModel)
+            .where(RestaurantModel.id == restaurant_id)
+            .values(is_active=False)
+            .execution_options(synchronize_session="fetch")
+        )
+        await self.session.execute(execute_update)
+        await self.session.commit()
+        restaurant_model = await self.get_by_id(restaurant_id)
         return RestaurantWithRelations.model_validate(
             restaurant_model, from_attributes=True
         )

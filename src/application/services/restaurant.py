@@ -28,3 +28,11 @@ class RestaurantService:
 
     async def create(self, data: RestaurantBaseInput) -> RestaurantWithRelations:
         return await self.restaurant_repository.create(data)
+
+    async def update(
+        self, restaurant_id: int, data: RestaurantBaseInput
+    ) -> RestaurantWithRelations:
+        return await self.restaurant_repository.update(restaurant_id, data)
+
+    async def deactivate(self, restaurant_id: int) -> RestaurantWithRelations:
+        return await self.restaurant_repository.deactivate(restaurant_id)

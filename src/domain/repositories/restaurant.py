@@ -22,3 +22,11 @@ class IRestaurantRepository:
 
     async def create(self, data: RestaurantBaseInput) -> RestaurantWithRelations:
         raise NotImplementedError
+
+    async def update(
+        self, restaurant_id: int, data: RestaurantBaseInput
+    ) -> RestaurantWithRelations:
+        raise NotImplementedError
+
+    async def deactivate(self, restaurant_id: int) -> RestaurantWithRelations:
+        raise NotImplementedError

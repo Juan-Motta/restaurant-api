@@ -55,3 +55,28 @@ async def create_restaurant(
     service = get_restaurant_service(session=session)
     response = await service.create(data)
     return response
+
+
+@router.put("/restaurants/{restaurant_id}", response_model=RestaurantWithRelations)
+async def update_restaurant(
+    request: Request,
+    restaurant_id: int,
+    data: RestaurantBaseInput,
+    session: AsyncSession = Depends(get_async_session),
+) -> RestaurantWithRelations:
+    logger.info(f"Updating restaurant: {data}")
+    service = get_restaurant_service(session=session)
+    response = await service.update(restaurant_id, data)
+    return response
+
+
+@router.delete("/restaurants/{restaurant_id}")
+async def deactivate_restaurant(
+    request: Request,
+    restaurant_id: int,
+    session: AsyncSession = Depends(get_async_session),
+):
+    logger.info(f"Deleting restaurant by id: {restaurant_id}")
+    service = get_restaurant_service(session=session)
+    response = await service.deactivate(restaurant_id)
+    return response
