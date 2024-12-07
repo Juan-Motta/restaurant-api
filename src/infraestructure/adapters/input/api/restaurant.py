@@ -70,7 +70,7 @@ async def update_restaurant(
     return response
 
 
-@router.delete("/restaurants/{restaurant_id}")
+@router.delete("/restaurants/{restaurant_id}", response_model=RestaurantWithRelations)
 async def deactivate_restaurant(
     request: Request,
     restaurant_id: int,
