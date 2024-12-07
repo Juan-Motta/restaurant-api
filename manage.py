@@ -43,5 +43,13 @@ def format(path: str):
     )
 
 
+@app.command()
+def populate_db():
+    run(
+        ["python", "-m", "scripts.generate_db_data.py"],
+        check=True,
+    )
+
+
 if __name__ == "__main__":
     app()
