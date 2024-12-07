@@ -1,8 +1,12 @@
 from sqlalchemy import func, select
+from sqlalchemy.orm import joinedload
 
-from src.domain.entities.restaurant import Restaurant
+from src.domain.entities.restaurant import RestaurantBase, RestaurantWithRelations
 from src.domain.repositories.restaurant import IRestaurantRepository
-from src.infraestructure.adapters.outputs.db.models import RestaurantModel
+from src.infraestructure.adapters.outputs.db.models import (
+    CategoryModel,
+    RestaurantModel,
+)
 
 
 class RestaurantRepository(IRestaurantRepository):
@@ -32,6 +36,21 @@ class RestaurantRepository(IRestaurantRepository):
         result = await self.session.execute(query)
         restaurants = result.scalars().all()
         return [
-            Restaurant.model_validate(restaurant.__dict__, from_attributes=True)
+            RestaurantBase.model_validate(restaurant, from_attributes=True)
             for restaurant in restaurants
         ]
+
+    async def get_by_id(self, restaurant_id: int):
+        query = (
+            select(RestaurantModel)
+            .join(CategoryModel, CategoryModel.id == RestaurantModel.category_id)
+            .options(joinedload(RestaurantModel.category))
+            .where(RestaurantModel.id == restaurant_id)
+        )
+        result = await self.session.execute(query)
+        restaurant = result.scalars().first()
+        return (
+            RestaurantWithRelations.model_validate(restaurant, from_attributes=True)
+            if restaurant
+            else None
+        )

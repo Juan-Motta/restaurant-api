@@ -1,4 +1,4 @@
-from src.domain.entities.restaurant import Restaurant
+from src.domain.entities.restaurant import RestaurantBase, RestaurantWithRelations
 
 
 class IRestaurantRepository:
@@ -10,5 +10,8 @@ class IRestaurantRepository:
         page: int | None = None,
         size: int | None = None,
         filters: dict | None = None,
-    ) -> list[Restaurant]:
+    ) -> list[RestaurantBase]:
+        raise NotImplementedError
+
+    async def get_by_id(self, restaurant_id: int) -> RestaurantWithRelations | None:
         raise NotImplementedError

@@ -1,6 +1,6 @@
 from src.application.commons.pagination import paginate
 from src.domain.entities.pagination import Page
-from src.domain.entities.restaurant import Restaurant
+from src.domain.entities.restaurant import RestaurantBase, RestaurantWithRelations
 from src.domain.repositories.restaurant import IRestaurantRepository
 
 
@@ -10,7 +10,7 @@ class RestaurantService:
 
     async def get_all(
         self, page: int = 1, size: int = 10, filters: dict | None = None
-    ) -> Page[Restaurant]:
+    ) -> Page[RestaurantBase]:
         all_restaurants_count = await self.restaurant_repository.count_all()
         restaurants = await self.restaurant_repository.get_all(
             page=page, size=size, filters=filters
@@ -18,3 +18,6 @@ class RestaurantService:
         return paginate(
             data=restaurants, page=page, size=size, total=all_restaurants_count
         )
+
+    async def get_by_id(self, restaurant_id: int) -> RestaurantWithRelations:
+        return await self.restaurant_repository.get_by_id(restaurant_id)
