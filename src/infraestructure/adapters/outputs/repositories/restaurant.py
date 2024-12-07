@@ -21,14 +21,14 @@ class RestaurantRepository(IRestaurantRepository):
         filters: dict | None = None,
     ):
         query = select(RestaurantModel)
-        if size:
-            query = query.limit(size)
-        if page:
-            query = query.offset(page * size)
         if filters and filters.get("id"):
             query = query.where(RestaurantModel.id == filters.get("id"))
         if filters and filters.get("name"):
-            query = query.where(RestaurantModel.name.ilike(filters.get("name")))
+            query = query.where(RestaurantModel.name.ilike(f'%{filters.get("name")}%'))
+        if page:
+            query = query.offset((page * size) - size)
+        if size:
+            query = query.limit(size)
         result = await self.session.execute(query)
         restaurants = result.scalars().all()
         return [
