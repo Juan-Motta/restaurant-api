@@ -1,11 +1,16 @@
 from datetime import datetime
 from decimal import Decimal
-from enum import Enum
 from typing import Optional
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from src.domain.constants.enums import (
+    CategoryTypologyEnum,
+    OrderStatusEnum,
+    RestaurantStatusEnum,
+    UserTypologyEnum,
+)
 from src.infraestructure.adapters.outputs.db.base import Base
 from src.infraestructure.adapters.outputs.db.mixins import (
     IntegerIdMixin,
@@ -14,36 +19,20 @@ from src.infraestructure.adapters.outputs.db.mixins import (
 )
 
 
-class UserTypologyEnum(Enum):
-    DEALER = "DEALER"
-    CUSTOMER = "CUSTOMER"
-
-
-class OrderStatusEnum(Enum):
-    PENDING = "PENDING"
-    TAKEN = "TAKEN"
-    PACKAGING = "PACKAGING"
-    IN_TRANSIT = "IN_TRANSIT"
-    DELIVERED = "DELIVERED"
-    CANCELED = "CANCELED"
-
-
-class RestaurantStatusEnum(Enum):
-    OPEN = "OPEN"
-    CLOSE = "CLOSE"
-
-
-class CategoryTypologyEnum(Enum):
-    RESTAURANT = "RESTAURANT"
-    MENU_ITEM = "MENU_ITEM"
-
-
 class RestaurantModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "restaurants"
     name: Mapped[str] = mapped_column(sa.String(255))
     address: Mapped[str] = mapped_column(sa.String(255))
-    rating: Mapped[Decimal] = mapped_column(sa.Numeric(3, 2))
-    status: Mapped[str] = mapped_column(sa.String(25))
+    rating: Mapped[Optional[Decimal]] = mapped_column(sa.Numeric(3, 2))
+    status: Mapped[RestaurantStatusEnum] = mapped_column(
+        sa.Enum(
+            RestaurantStatusEnum,
+            native_enum=False,
+            validate_strings=True,
+            values_callable=lambda x: [e.value for e in x],
+        ),
+        default=RestaurantStatusEnum.CLOSE,
+    )
     latitude: Mapped[Decimal] = mapped_column(sa.Numeric(21, 11))
     longitude: Mapped[Decimal] = mapped_column(sa.Numeric(21, 11))
 
