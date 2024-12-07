@@ -1,4 +1,8 @@
-from src.domain.entities.restaurant import RestaurantBase, RestaurantWithRelations
+from src.domain.entities.restaurant import (
+    RestaurantBase,
+    RestaurantBaseInput,
+    RestaurantWithRelations,
+)
 
 
 class IRestaurantRepository:
@@ -14,4 +18,7 @@ class IRestaurantRepository:
         raise NotImplementedError
 
     async def get_by_id(self, restaurant_id: int) -> RestaurantWithRelations | None:
+        raise NotImplementedError
+
+    async def create(self, data: RestaurantBaseInput) -> RestaurantWithRelations:
         raise NotImplementedError

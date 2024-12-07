@@ -1,7 +1,11 @@
 from sqlalchemy import func, select
 from sqlalchemy.orm import joinedload
 
-from src.domain.entities.restaurant import RestaurantBase, RestaurantWithRelations
+from src.domain.entities.restaurant import (
+    RestaurantBase,
+    RestaurantBaseInput,
+    RestaurantWithRelations,
+)
 from src.domain.repositories.restaurant import IRestaurantRepository
 from src.infraestructure.adapters.outputs.db.models import (
     CategoryModel,
@@ -23,7 +27,7 @@ class RestaurantRepository(IRestaurantRepository):
         page: int | None = None,
         size: int | None = None,
         filters: dict | None = None,
-    ):
+    ) -> list[RestaurantBase]:
         query = select(RestaurantModel)
         if filters and filters.get("id"):
             query = query.where(RestaurantModel.id == filters.get("id"))
@@ -40,7 +44,7 @@ class RestaurantRepository(IRestaurantRepository):
             for restaurant in restaurants
         ]
 
-    async def get_by_id(self, restaurant_id: int):
+    async def get_by_id(self, restaurant_id: int) -> RestaurantWithRelations | None:
         query = (
             select(RestaurantModel)
             .join(CategoryModel, CategoryModel.id == RestaurantModel.category_id)
@@ -53,4 +57,13 @@ class RestaurantRepository(IRestaurantRepository):
             RestaurantWithRelations.model_validate(restaurant, from_attributes=True)
             if restaurant
             else None
+        )
+
+    async def create(self, restaurant: RestaurantBaseInput) -> RestaurantWithRelations:
+        restaurant_model = RestaurantModel(**restaurant.model_dump())
+        self.session.add(restaurant_model)
+        await self.session.commit()
+        restaurant_model = await self.get_by_id(restaurant_model.id)
+        return RestaurantWithRelations.model_validate(
+            restaurant_model, from_attributes=True
         )

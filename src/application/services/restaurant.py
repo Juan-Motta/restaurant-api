@@ -1,6 +1,10 @@
 from src.application.commons.pagination import paginate
 from src.domain.entities.pagination import Page
-from src.domain.entities.restaurant import RestaurantBase, RestaurantWithRelations
+from src.domain.entities.restaurant import (
+    RestaurantBase,
+    RestaurantBaseInput,
+    RestaurantWithRelations,
+)
 from src.domain.repositories.restaurant import IRestaurantRepository
 
 
@@ -21,3 +25,6 @@ class RestaurantService:
 
     async def get_by_id(self, restaurant_id: int) -> RestaurantWithRelations:
         return await self.restaurant_repository.get_by_id(restaurant_id)
+
+    async def create(self, data: RestaurantBaseInput) -> RestaurantWithRelations:
+        return await self.restaurant_repository.create(data)

@@ -4,7 +4,11 @@ from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.dependencies.services import get_restaurant_service
-from src.domain.entities.restaurant import RestaurantBase, RestaurantWithRelations
+from src.domain.entities.restaurant import (
+    RestaurantBase,
+    RestaurantBaseInput,
+    RestaurantWithRelations,
+)
 from src.domain.filters.restaurant import RestaurantFilter
 from src.infraestructure.adapters.outputs.db.session import get_async_session
 
@@ -38,4 +42,16 @@ async def get_restaurant_by_id(
     logger.info(f"Getting restaurant by id: {restaurant_id}")
     service = get_restaurant_service(session=session)
     response = await service.get_by_id(restaurant_id)
+    return response
+
+
+@router.post("/restaurants", response_model=RestaurantWithRelations)
+async def create_restaurant(
+    request: Request,
+    data: RestaurantBaseInput,
+    session: AsyncSession = Depends(get_async_session),
+) -> RestaurantWithRelations:
+    logger.info(f"Creating restaurant: {data}")
+    service = get_restaurant_service(session=session)
+    response = await service.create(data)
     return response
