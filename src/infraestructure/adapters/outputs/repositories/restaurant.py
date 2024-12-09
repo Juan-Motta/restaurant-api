@@ -34,6 +34,8 @@ class RestaurantRepository(IRestaurantRepository):
             query = query.where(RestaurantModel.id == filters.get("id"))
         if filters and filters.get("name"):
             query = query.where(RestaurantModel.name.ilike(f'%{filters.get("name")}%'))
+        if filters and filters.get("is_active"):
+            query = query.where(RestaurantModel.is_active == filters.get("is_active"))
         if page:
             query = query.offset((page * size) - size)
         if size:

@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from infraestructure.dependencies.services import get_restaurant_service
+from src.domain.entities.pagination import Page
 from src.domain.entities.restaurant import (
     RestaurantBase,
     RestaurantBaseInput,
@@ -11,20 +11,21 @@ from src.domain.entities.restaurant import (
 )
 from src.domain.filters.restaurant import RestaurantFilter
 from src.infraestructure.adapters.outputs.db.session import get_async_session
+from src.infraestructure.dependencies.services import get_restaurant_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Restaurants"])
 
 
-@router.get("/restaurants", response_model=list[RestaurantBase])
+@router.get("/restaurants", response_model=Page[RestaurantBase])
 async def get_all_restaurants(
     request: Request,
     page: int = Query(default=1, ge=1),
     size: int = Query(default=10, ge=0),
     session: AsyncSession = Depends(get_async_session),
     filters: RestaurantFilter = Depends(RestaurantFilter),
-) -> list[RestaurantBase]:
+) -> Page[RestaurantBase]:
     logger.info("Getting all restaurants..")
     service = get_restaurant_service(session=session)
     response = await service.get_all(
