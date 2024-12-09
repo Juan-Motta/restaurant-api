@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dependencies.services import get_restaurant_service
+from infraestructure.dependencies.services import get_restaurant_service
 from src.domain.entities.restaurant import (
     RestaurantBase,
     RestaurantBaseInput,

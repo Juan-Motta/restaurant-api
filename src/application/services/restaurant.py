@@ -1,5 +1,4 @@
-from src.application.commons.pagination import paginate
-from src.domain.entities.pagination import Page
+from src.domain.entities.pagination import Page, paginate
 from src.domain.entities.restaurant import (
     RestaurantBase,
     RestaurantBaseInput,
