@@ -51,5 +51,15 @@ def populate_db():
     )
 
 
+@app.command()
+def test():
+    run(["python", "-m", "pytest", "-vv"], check=True)
+
+
+@app.command()
+def coverage():
+    run(["python", "-m", "pytest", "--cov", "--cov-report=html"], check=True)
+
+
 if __name__ == "__main__":
     app()
