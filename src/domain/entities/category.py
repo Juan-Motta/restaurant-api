@@ -8,5 +8,4 @@ class Category(BaseModel):
     typology: str
     is_active: bool
 
-    class Config:
-        model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)

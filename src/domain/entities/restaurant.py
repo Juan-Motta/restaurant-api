@@ -16,8 +16,7 @@ class RestaurantBase(BaseModel):
     longitude: Decimal
     is_active: bool
 
-    class Config:
-        model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RestaurantWithRelations(BaseModel):
@@ -31,8 +30,7 @@ class RestaurantWithRelations(BaseModel):
     category: Category
     is_active: bool
 
-    class Config:
-        model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RestaurantBaseInput(BaseModel):

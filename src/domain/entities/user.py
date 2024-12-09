@@ -14,8 +14,7 @@ class UserBase(BaseModel):
     address: str
     is_active: bool
 
-    class Config:
-        model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserWithRelations(BaseModel):
@@ -28,8 +27,7 @@ class UserWithRelations(BaseModel):
     restaurant: RestaurantBase
     # orders: list[OrderBase]
 
-    class Config:
-        model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserBaseInput(BaseModel):
