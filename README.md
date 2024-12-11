@@ -4,6 +4,11 @@
 
 This API serves as the backend for a restaurant order management system, built with FastAPI and following hexagonal architecture patterns for clean separation of concerns and adaptability. This backend service is responsible for handling order processing, reporting, bulk customer uploads, and authentication.
 
+### Data Model
+
+<img width="1090" alt="image" src="https://github.com/user-attachments/assets/089f4f56-0046-4bb1-81f9-133d2367908a">
+
+
 ## Technical Stack
 
 - FastAPI: Web framework for building APIs with Python.
