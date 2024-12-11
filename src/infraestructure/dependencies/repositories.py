@@ -1,5 +1,8 @@
 from sqlalchemy.orm import Session
 
+from src.infraestructure.adapters.outputs.repositories.menu_item import (
+    MenuItemRepository,
+)
 from src.infraestructure.adapters.outputs.repositories.restaurant import (
     RestaurantRepository,
 )
@@ -12,3 +15,7 @@ def get_restaurant_repository(session: Session) -> RestaurantRepository:
 
 def get_user_repository(session: Session) -> UserRepository:
     return UserRepository(session=session)
+
+
+def get_menu_item_repository(session: Session) -> MenuItemRepository:
+    return MenuItemRepository(session=session)

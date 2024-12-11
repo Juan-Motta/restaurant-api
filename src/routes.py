@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from src.infraestructure.adapters.input.api.menu_item import router as menu_item_router
 from src.infraestructure.adapters.input.api.restaurant import (
     router as restaurant_router,
 )
@@ -11,6 +12,7 @@ router_v1 = APIRouter(prefix="/api/v1")
 router_v1.include_router(root_router)
 router_v1.include_router(restaurant_router)
 router_v1.include_router(user_router)
+router_v1.include_router(menu_item_router)
 
 METADATA = [
     {
@@ -20,6 +22,10 @@ METADATA = [
     {
         "name": "Users",
         "description": """Endpoints to manage users""",
+    },
+    {
+        "name": "Menu Items",
+        "description": """Endpoints to manage menu items""",
     },
     {
         "name": "Root",
