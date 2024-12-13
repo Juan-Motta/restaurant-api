@@ -42,6 +42,12 @@ Following hexagonal architecture guidelines, our project is divided into:
 - Bulk customer creation from a CSV/XLSX route, limited to 20 entries per upload.
 - Metrics dashboard endpoint exposing popular statistics per restaurant.
 
+## Tasks monitoring
+To monitor asynchronous tasks using Celery, there is a dashboard implemented using Celery Insights.
+
+![image](https://github.com/user-attachments/assets/53291e7f-bb0d-4640-bbc4-db65c0f910c3)
+
+
 ## Getting Started
 
 ### Prerequisites
