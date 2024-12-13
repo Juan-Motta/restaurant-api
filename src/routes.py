@@ -5,6 +5,7 @@ from src.infraestructure.adapters.input.api.order import router as order_router
 from src.infraestructure.adapters.input.api.order_item import (
     router as order_item_router,
 )
+from src.infraestructure.adapters.input.api.rating import router as rating_router
 from src.infraestructure.adapters.input.api.restaurant import (
     router as restaurant_router,
 )
@@ -19,6 +20,7 @@ router_v1.include_router(user_router)
 router_v1.include_router(menu_item_router)
 router_v1.include_router(order_router)
 router_v1.include_router(order_item_router)
+router_v1.include_router(rating_router)
 
 METADATA = [
     {
@@ -44,5 +46,9 @@ METADATA = [
     {
         "name": "Order Items",
         "description": """Endpoints to manage order items""",
+    },
+    {
+        "name": "Ratings",
+        "description": """Endpoints to manage ratings""",
     },
 ]
