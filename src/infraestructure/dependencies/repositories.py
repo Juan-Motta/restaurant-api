@@ -4,6 +4,9 @@ from src.infraestructure.adapters.outputs.repositories.menu_item import (
     MenuItemRepository,
 )
 from src.infraestructure.adapters.outputs.repositories.order import OrderRepository
+from src.infraestructure.adapters.outputs.repositories.order_item import (
+    OrderItemRepository,
+)
 from src.infraestructure.adapters.outputs.repositories.restaurant import (
     RestaurantRepository,
 )
@@ -24,3 +27,7 @@ def get_menu_item_repository(session: Session) -> MenuItemRepository:
 
 def get_order_repository(session: Session) -> OrderRepository:
     return OrderRepository(session=session)
+
+
+def get_order_item_repository(session: Session) -> OrderItemRepository:
+    return OrderItemRepository(session=session)

@@ -2,6 +2,9 @@ from fastapi import APIRouter
 
 from src.infraestructure.adapters.input.api.menu_item import router as menu_item_router
 from src.infraestructure.adapters.input.api.order import router as order_router
+from src.infraestructure.adapters.input.api.order_item import (
+    router as order_item_router,
+)
 from src.infraestructure.adapters.input.api.restaurant import (
     router as restaurant_router,
 )
@@ -15,6 +18,7 @@ router_v1.include_router(restaurant_router)
 router_v1.include_router(user_router)
 router_v1.include_router(menu_item_router)
 router_v1.include_router(order_router)
+router_v1.include_router(order_item_router)
 
 METADATA = [
     {
@@ -32,5 +36,13 @@ METADATA = [
     {
         "name": "Root",
         "description": """Root endpoint""",
+    },
+    {
+        "name": "Orders",
+        "description": """Endpoints to manage orders""",
+    },
+    {
+        "name": "Order Items",
+        "description": """Endpoints to manage order items""",
     },
 ]
