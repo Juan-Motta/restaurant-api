@@ -8,5 +8,6 @@ logger = logging.getLogger(__name__)
 
 
 @celery.task
-def dummy_task() -> None:
+def dummy_task() -> dict:
     logger.info("Dummy task executed")
+    return {"status": "OK"}
