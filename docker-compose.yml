@@ -45,6 +45,18 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+  
+  celery-insights:
+    image: ghcr.io/danyi1212/celery-insights-all:latest
+    container_name: celery-insights
+    environment:
+      BROKER_URL: redis://redis:6379/0
+      RESULT_BACKEND: redis://redis:6379/0
+    ports:
+      - "8555:8555"  # Expose port 8555
+    depends_on:
+      redis:
+        condition: service_healthy  # Wait for Redis to be healthy
 
   postgres:
     image: postgres:16-alpine

@@ -81,6 +81,9 @@ Following hexagonal architecture guidelines, our project is divided into:
     DB_PASSWORD="postgres"
     DB_NAME="restaurant_db"
     DB_DRIVER="postgresql+psycopg"`
+
+    REDIS_HOST="redis"
+    REDIS_PORT="6379"
    ```
    Environment variables are used to manage configurations and secrets, sample structure provided in .env.example.
 

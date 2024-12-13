@@ -9,6 +9,11 @@ celery: Celery = Celery(
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_BROKER_URL,
 )
+celery.conf.worker_send_task_events = True
+celery.conf.task_send_sent_event = True
+celery.conf.task_track_started = True
+celery.conf.result_extended = True
+celery.conf.enable_utc = True
 
 # Auto-discover tasks
 celery.autodiscover_tasks(["src.infraestructure.adapters.input.celery.dummy"])
