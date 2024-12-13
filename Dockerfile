@@ -24,6 +24,10 @@ COPY  . .
 FROM build AS server
 CMD ["python", "manage.py", "runserver", "--port", "9000", "--host", "0.0.0.0", "--reload"]
 
+# Stage for Celery server
+FROM build AS celery
+CMD ["python", "manage.py", "runcelery"]
+
 # Stage for migrations
 FROM build AS migrate
 CMD ["python", "manage.py", "migrate"]
