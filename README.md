@@ -97,9 +97,11 @@ To monitor asynchronous tasks using Celery, there is a dashboard implemented usi
    ```
    docker-compose up --build
    ```
-    The API should now be accessible at http://localhost:9000. To change default port modify the file docker-compose.yml
+    The API should now be accessible at http://localhost:9000. To change default port modify the file docker-compose.yml.
+    To access docs use http://localhost:9000/docs
+    To access celery monitoring use http://localhost:8555. To change default port modify the file docker-compose.yml.
 
-5. Run the provided script to initialize the database with some test data:
+6. Run the provided script to initialize the database with some test data:
    ```
    docker-compose exec web python scripts/init_db.py
    ```
