@@ -42,7 +42,25 @@ class RestaurantRepository(IRestaurantRepository):
             query = query.where(RestaurantModel.rating <= filters.get("rating_lte"))
         if filters and filters.get("rating_gte"):
             query = query.where(RestaurantModel.rating >= filters.get("rating_gte"))
-        if filters and filters.get("is_active"):
+        if filters and filters.get("status"):
+            query = query.where(RestaurantModel.status == filters.get("status"))
+        if filters and filters.get("latitude_lte"):
+            query = query.where(RestaurantModel.latitude <= filters.get("latitude_lte"))
+        if filters and filters.get("latitude_gte"):
+            query = query.where(RestaurantModel.latitude >= filters.get("latitude_gte"))
+        if filters and filters.get("longitude_lte"):
+            query = query.where(
+                RestaurantModel.longitude <= filters.get("longitude_lte")
+            )
+        if filters and filters.get("longitude_gte"):
+            query = query.where(
+                RestaurantModel.longitude >= filters.get("longitude_gte")
+            )
+        if filters and filters.get("category_id"):
+            query = query.where(
+                RestaurantModel.category_id == filters.get("category_id")
+            )
+        if filters and filters.get("is_active") in (True, False):
             query = query.where(RestaurantModel.is_active == filters.get("is_active"))
         if page:
             query = query.offset((page * size) - size)

@@ -29,7 +29,45 @@ class OrderRepository(IOrderRepository):
         query = select(OrderModel)
         if filters and filters.get("id"):
             query = query.where(OrderModel.id == filters.get("id"))
-        if filters and filters.get("is_active"):
+        if filters and filters.get("status"):
+            query = query.where(OrderModel.status == filters.get("status"))
+        if filters and filters.get("total_amount_lte"):
+            query = query.where(
+                OrderModel.total_amount <= filters.get("total_amount_lte")
+            )
+        if filters and filters.get("total_amount_gte"):
+            query = query.where(
+                OrderModel.total_amount >= filters.get("total_amount_gte")
+            )
+        if filters and filters.get("delivery_address"):
+            query = query.where(
+                OrderModel.delivery_address.ilike(
+                    f'%{filters.get("delivery_address")}%'
+                )
+            )
+        if filters and filters.get("special_instructions"):
+            query = query.where(
+                OrderModel.special_instructions.ilike(
+                    f'%{filters.get("special_instructions")}%'
+                )
+            )
+        if filters and filters.get("estimated_delivery_time_lte"):
+            query = query.where(
+                OrderModel.estimated_delivery_time
+                <= filters.get("estimated_delivery_time_lte")
+            )
+        if filters and filters.get("estimated_delivery_time_gte"):
+            query = query.where(
+                OrderModel.estimated_delivery_time
+                >= filters.get("estimated_delivery_time_gte")
+            )
+        if filters and filters.get("restaurant_id"):
+            query = query.where(
+                OrderModel.restaurant_id == filters.get("restaurant_id")
+            )
+        if filters and filters.get("customer_id"):
+            query = query.where(OrderModel.customer_id == filters.get("customer_id"))
+        if filters and filters.get("is_active") in (True, False):
             query = query.where(OrderModel.is_active == filters.get("is_active"))
         if page:
             query = query.offset((page * size) - size)

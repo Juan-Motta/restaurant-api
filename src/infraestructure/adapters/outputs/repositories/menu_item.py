@@ -35,7 +35,35 @@ class MenuItemRepository(IMenuItemRepository):
             query = query.where(MenuItemModel.id == filters.get("id"))
         if filters and filters.get("name"):
             query = query.where(MenuItemModel.name.ilike(f'%{filters.get("name")}%'))
-        if filters and filters.get("is_active"):
+        if filters and filters.get("description"):
+            query = query.where(
+                MenuItemModel.description.ilike(f'%{filters.get("description")}%')
+            )
+        if filters and filters.get("price_lte"):
+            query = query.where(MenuItemModel.price <= filters.get("price_lte"))
+        if filters and filters.get("price_gte"):
+            query = query.where(MenuItemModel.price >= filters.get("price_gte"))
+        if filters and filters.get("preparation_time_lte"):
+            query = query.where(
+                MenuItemModel.preparation_time <= filters.get("preparation_time_lte")
+            )
+        if filters and filters.get("preparation_time_gte"):
+            query = query.where(
+                MenuItemModel.preparation_time >= filters.get("preparation_time_gte")
+            )
+        if filters and filters.get("available") in (True, False):
+            query = query.where(MenuItemModel.available == filters.get("available"))
+        if filters and filters.get("image_url"):
+            query = query.where(
+                MenuItemModel.image_url.ilike(f'%{filters.get("image_url")}%')
+            )
+        if filters and filters.get("category_id"):
+            query = query.where(MenuItemModel.category_id == filters.get("category_id"))
+        if filters and filters.get("restaurant_id"):
+            query = query.where(
+                MenuItemModel.restaurant_id == filters.get("restaurant_id")
+            )
+        if filters and filters.get("is_active") in (True, False):
             query = query.where(MenuItemModel.is_active == filters.get("is_active"))
         if page:
             query = query.offset((page * size) - size)

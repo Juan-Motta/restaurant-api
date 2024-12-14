@@ -27,9 +27,19 @@ class RatingRepository(IRatingRepository):
         filters: dict | None = None,
     ) -> list[RatingBase]:
         query = select(RatingModel)
+        if filters and filters.get("id"):
+            query = query.where(RatingModel.id == filters.get("id"))
+        if filters and filters.get("rating_lte"):
+            query = query.where(RatingModel.rating <= filters.get("rating_lte"))
+        if filters and filters.get("rating_gte"):
+            query = query.where(RatingModel.rating >= filters.get("rating_gte"))
+        if filters and filters.get("comment"):
+            query = query.where(
+                RatingModel.comment.ilike(f"""%{filters.get("comment")}%""")
+            )
         if filters and filters.get("order_id"):
             query = query.where(RatingModel.order_id == filters.get("order_id"))
-        if filters and filters.get("is_active"):
+        if filters and filters.get("is_active") in (True, False):
             query = query.where(RatingModel.is_active == filters.get("is_active"))
         if page:
             query = query.offset((page * size) - size)

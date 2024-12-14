@@ -31,13 +31,33 @@ class OrderItemRepository(IOrderItemRepository):
         filters: dict | None = None,
     ) -> list[OrderItemBase]:
         query = select(OrderItemModel)
+        if filters and filters.get("id"):
+            query = query.where(OrderItemModel.id == filters.get("id"))
+        if filters and filters.get("quantity_lte"):
+            query = query.where(OrderItemModel.quantity <= filters.get("quantity_lte"))
+        if filters and filters.get("quantity_gte"):
+            query = query.where(OrderItemModel.quantity >= filters.get("quantity_gte"))
+        if filters and filters.get("sub_total_lte"):
+            query = query.where(
+                OrderItemModel.sub_total <= filters.get("sub_total_lte")
+            )
+        if filters and filters.get("sub_total_gte"):
+            query = query.where(
+                OrderItemModel.sub_total >= filters.get("sub_total_gte")
+            )
+        if filters and filters.get("total_lte"):
+            query = query.where(OrderItemModel.total <= filters.get("total_lte"))
+        if filters and filters.get("total_gte"):
+            query = query.where(OrderItemModel.total >= filters.get("total_gte"))
+        if filters and filters.get("notes"):
+            query = query.where(OrderItemModel.notes.ilike(f"%{filters.get('notes')}%"))
         if filters and filters.get("order_id"):
             query = query.where(OrderItemModel.order_id == filters.get("order_id"))
         if filters and filters.get("menu_item_id"):
             query = query.where(
                 OrderItemModel.menu_item_id == filters.get("menu_item_id")
             )
-        if filters and filters.get("is_active"):
+        if filters and filters.get("is_active") in (True, False):
             query = query.where(OrderItemModel.is_active == filters.get("is_active"))
         if page:
             query = query.offset((page * size) - size)
