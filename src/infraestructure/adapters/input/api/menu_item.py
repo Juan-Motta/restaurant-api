@@ -29,7 +29,7 @@ async def get_all_menu_items(
     logger.info("Getting all menu items..")
     service = get_menu_item_service(session=session)
     response = await service.get_all(
-        page=page, size=size, filters=filters.filter_criteria()
+        page=page, size=size, filters=filters.model_dump(exclude_none=True)
     )
     return response
 

@@ -25,7 +25,7 @@ async def get_all_orders(
     logger.info("Getting all orders..")
     service = get_order_service(session=session)
     response = await service.get_all(
-        page=page, size=size, filters=filters.filter_criteria()
+        page=page, size=size, filters=filters.model_dump(exclude_none=True)
     )
     return response
 

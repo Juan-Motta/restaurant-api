@@ -1,12 +1,8 @@
-from dataclasses import dataclass
-
 from fastapi import Query
+from pydantic import BaseModel
 
-from src.domain.filters.base import BaseFilter
 
-
-@dataclass
-class MenuItemFilter(BaseFilter):
+class MenuItemFilter(BaseModel):
     id: int | None = Query(None, description="Menu Item ID", ge=1)
     name: str | None = Query(
         None, description="Menu Item name", min_length=1, max_length=100

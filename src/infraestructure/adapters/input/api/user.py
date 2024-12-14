@@ -25,7 +25,7 @@ async def get_all_users(
     logger.info("Getting all users..")
     service = get_user_service(session=session)
     response = await service.get_all(
-        page=page, size=size, filters=filters.filter_criteria()
+        page=page, size=size, filters=filters.model_dump(exclude_none=True)
     )
     return response
 

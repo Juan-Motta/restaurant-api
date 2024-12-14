@@ -29,7 +29,7 @@ async def get_all_order_items(
     logger.info("Getting all order items..")
     service = get_order_item_service(session=session)
     response = await service.get_all(
-        page=page, size=size, filters=filters.filter_criteria()
+        page=page, size=size, filters=filters.model_dump(exclude_none=True)
     )
     return response
 
