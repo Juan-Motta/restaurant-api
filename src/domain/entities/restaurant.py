@@ -3,7 +3,6 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.domain.constants.enums import RestaurantStatusEnum
-from src.domain.entities.category import Category
 
 
 class RestaurantBase(BaseModel):
@@ -14,6 +13,7 @@ class RestaurantBase(BaseModel):
     status: RestaurantStatusEnum
     latitude: Decimal
     longitude: Decimal
+    category_id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
@@ -27,7 +27,7 @@ class RestaurantWithRelations(BaseModel):
     status: RestaurantStatusEnum
     latitude: Decimal
     longitude: Decimal
-    category: Category
+    category_id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)

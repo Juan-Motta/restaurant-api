@@ -51,14 +51,7 @@ class OrderItemRepository(IOrderItemRepository):
         ]
 
     async def get_by_id(self, order_item_id: int) -> OrderItemWithRelations | None:
-        query = (
-            select(OrderItemModel)
-            .join(OrderModel, OrderModel.id == OrderItemModel.order_id)
-            .options(joinedload(OrderItemModel.order))
-            .join(MenuItemModel, MenuItemModel.id == OrderItemModel.menu_item_id)
-            .options(joinedload(OrderItemModel.menu_item))
-            .where(OrderItemModel.id == order_item_id)
-        )
+        query = select(OrderItemModel).where(OrderItemModel.id == order_item_id)
         result = await self.session.execute(query)
         order_item = result.scalars().first()
         return (

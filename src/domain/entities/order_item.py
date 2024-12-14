@@ -2,9 +2,6 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.domain.entities.menu_item import MenuItemBase
-from src.domain.entities.order import OrderBase
-
 
 class OrderItemBase(BaseModel):
     id: int
@@ -25,8 +22,8 @@ class OrderItemWithRelations(BaseModel):
     sub_total: Decimal
     total: Decimal
     notes: str
-    order: OrderBase
-    menu_item: MenuItemBase
+    order_id: int
+    menu_item_id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)

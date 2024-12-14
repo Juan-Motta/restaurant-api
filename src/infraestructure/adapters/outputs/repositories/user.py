@@ -4,7 +4,11 @@ from sqlalchemy.orm import Session, joinedload
 
 from src.domain.entities.user import UserBase, UserBaseInput, UserWithRelations
 from src.domain.repositories.user import IUserRepository
-from src.infraestructure.adapters.outputs.db.models import RestaurantModel, UserModel
+from src.infraestructure.adapters.outputs.db.models import (
+    OrderModel,
+    RestaurantModel,
+    UserModel,
+)
 
 
 class UserRepository(IUserRepository):
@@ -33,7 +37,15 @@ class UserRepository(IUserRepository):
             query = query.where(UserModel.name.ilike(f'%{filters.get("first_name")}%'))
         if filters and filters.get("last_name"):
             query = query.where(UserModel.name.ilike(f'%{filters.get("last_name")}%'))
-        if filters and filters.get("is_active"):
+        if filters and filters.get("email"):
+            query = query.where(UserModel.email.ilike(f'%{filters.get("email")}%'))
+        if filters and filters.get("phone"):
+            query = query.where(UserModel.phone.ilike(f'%{filters.get("phone")}%'))
+        if filters and filters.get("address"):
+            query = query.where(UserModel.address.ilike(f'%{filters.get("address")}%'))
+        if filters and filters.get("restaurant_id"):
+            query = query.where(UserModel.restaurant_id == filters.get("restaurant_id"))
+        if filters and filters.get("is_active") in (True, False):
             query = query.where(UserModel.is_active == filters.get("is_active"))
         if page:
             query = query.offset((page * size) - size)
@@ -44,12 +56,7 @@ class UserRepository(IUserRepository):
         return [UserBase.model_validate(user, from_attributes=True) for user in users]
 
     async def get_by_id(self, user_id: int) -> UserWithRelations | None:
-        query = (
-            select(UserModel)
-            .join(RestaurantModel, RestaurantModel.id == UserModel.restaurant_id)
-            .options(joinedload(UserModel.restaurant))
-            .where(UserModel.id == user_id)
-        )
+        query = select(UserModel).where(UserModel.id == user_id)
         result = await self.session.execute(query)
         user = result.scalars().first()
         return (

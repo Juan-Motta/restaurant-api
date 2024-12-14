@@ -42,14 +42,7 @@ class OrderRepository(IOrderRepository):
         ]
 
     async def get_by_id(self, order_id: int) -> OrderWithRelations | None:
-        query = (
-            select(OrderModel)
-            .join(RestaurantModel, RestaurantModel.id == OrderModel.restaurant_id)
-            .options(joinedload(OrderModel.restaurant))
-            .join(UserModel, UserModel.id == OrderModel.customer_id)
-            .options(joinedload(OrderModel.customer))
-            .where(OrderModel.id == order_id)
-        )
+        query = select(OrderModel).where(OrderModel.id == order_id)
         result = await self.session.execute(query)
         order = result.scalars().first()
         return (

@@ -34,6 +34,14 @@ class RestaurantRepository(IRestaurantRepository):
             query = query.where(RestaurantModel.id == filters.get("id"))
         if filters and filters.get("name"):
             query = query.where(RestaurantModel.name.ilike(f'%{filters.get("name")}%'))
+        if filters and filters.get("address"):
+            query = query.where(
+                RestaurantModel.address.ilike(f'%{filters.get("address")}%')
+            )
+        if filters and filters.get("rating_lte"):
+            query = query.where(RestaurantModel.rating <= filters.get("rating_lte"))
+        if filters and filters.get("rating_gte"):
+            query = query.where(RestaurantModel.rating >= filters.get("rating_gte"))
         if filters and filters.get("is_active"):
             query = query.where(RestaurantModel.is_active == filters.get("is_active"))
         if page:
@@ -48,12 +56,7 @@ class RestaurantRepository(IRestaurantRepository):
         ]
 
     async def get_by_id(self, restaurant_id: int) -> RestaurantWithRelations | None:
-        query = (
-            select(RestaurantModel)
-            .join(CategoryModel, CategoryModel.id == RestaurantModel.category_id)
-            .options(joinedload(RestaurantModel.category))
-            .where(RestaurantModel.id == restaurant_id)
-        )
+        query = select(RestaurantModel).where(RestaurantModel.id == restaurant_id)
         result = await self.session.execute(query)
         restaurant = result.scalars().first()
         return (

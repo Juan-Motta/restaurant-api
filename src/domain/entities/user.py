@@ -2,8 +2,6 @@ import re
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from src.domain.entities.restaurant import RestaurantBase
-
 
 class UserBase(BaseModel):
     id: int
@@ -12,6 +10,7 @@ class UserBase(BaseModel):
     email: str
     phone: str
     address: str
+    restaurant_id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
@@ -24,8 +23,7 @@ class UserWithRelations(BaseModel):
     email: str
     phone: str
     address: str
-    restaurant: RestaurantBase
-    # orders: list[OrderBase]
+    restaurant_id: int
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -50,6 +48,9 @@ class UserBaseInput(BaseModel):
     @field_validator("email")
     @classmethod
     def validate_email(cls, v):
+        pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+        if not re.match(pattern, v):
+            raise ValueError("Invalid email format")
         if not v:
             raise ValueError("Email must not be empty")
         return v.lower()
@@ -57,6 +58,9 @@ class UserBaseInput(BaseModel):
     @field_validator("phone")
     @classmethod
     def validate_phone(cls, v):
+        pattern = r"^\+?[1-9]\d{1,14}$"
+        if not re.match(pattern, v):
+            raise ValueError("Invalid phone format")
         if not v:
             raise ValueError("Phone must not be empty")
         return v

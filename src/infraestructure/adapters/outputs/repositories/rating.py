@@ -43,12 +43,7 @@ class RatingRepository(IRatingRepository):
         ]
 
     async def get_by_id(self, rating_id: int) -> RatingWithRelations | None:
-        query = (
-            select(RatingModel)
-            .join(OrderModel, OrderModel.id == RatingModel.order_id)
-            .options(joinedload(RatingModel.order))
-            .where(RatingModel.id == rating_id)
-        )
+        query = select(RatingModel).where(RatingModel.id == rating_id)
         result = await self.session.execute(query)
         rating = result.scalars().first()
         return (

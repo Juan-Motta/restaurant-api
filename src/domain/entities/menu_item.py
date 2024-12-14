@@ -2,9 +2,6 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.domain.entities.category import Category
-from src.domain.entities.restaurant import RestaurantBase
-
 
 class MenuItemBase(BaseModel):
     id: int
@@ -27,8 +24,8 @@ class MenuItemWithRelations(BaseModel):
     preparation_time: int
     available: bool
     image_url: str
-    category: Category
-    restaurant: RestaurantBase
+    category_id: int
+    restaurant_id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)

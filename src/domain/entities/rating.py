@@ -19,7 +19,7 @@ class RatingWithRelations(BaseModel):
     id: int
     rating: Decimal
     comment: str
-    order: OrderBase
+    order_id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)

@@ -48,14 +48,7 @@ class MenuItemRepository(IMenuItemRepository):
         ]
 
     async def get_by_id(self, menu_item_id: int) -> MenuItemWithRelations | None:
-        query = (
-            select(MenuItemModel)
-            .join(CategoryModel, CategoryModel.id == MenuItemModel.category_id)
-            .options(joinedload(MenuItemModel.category))
-            .join(RestaurantModel, RestaurantModel.id == MenuItemModel.restaurant_id)
-            .options(joinedload(MenuItemModel.restaurant))
-            .where(MenuItemModel.id == menu_item_id)
-        )
+        query = select(MenuItemModel).where(MenuItemModel.id == menu_item_id)
         result = await self.session.execute(query)
         menu = result.scalars().first()
         return (

@@ -4,8 +4,6 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.domain.constants.enums import OrderStatusEnum
-from src.domain.entities.restaurant import RestaurantBase
-from src.domain.entities.user import UserBase
 
 
 class OrderBase(BaseModel):
@@ -29,8 +27,8 @@ class OrderWithRelations(BaseModel):
     delivery_address: str
     special_instructions: str
     estimated_delivery_time: datetime
-    restaurant: RestaurantBase
-    customer: UserBase
+    restaurant_id: int
+    customer_id: int
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
