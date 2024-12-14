@@ -1,5 +1,9 @@
 # Restaurant Order Management System
 
+![Python version](https://img.shields.io/badge/Python-3.11-blue?style=flat-square)
+[![Continuous integration](https://img.shields.io/github/actions/workflow/status/Juan-Motta/restaurant-api/ci.yml?branch=main&style=flat-square)](https://github.com/Juan-Motta/restaurant-api/actions?query=branch:main)
+[![Coverage Status](https://img.shields.io/coverallsCoverage/github/Juan-Motta/restaurant-api?branch=main&style=flat-square)](https://coveralls.io/github/Juan-Motta/restaurant-api)
+
 ## Description
 
 This API serves as the backend for a restaurant order management system, built with FastAPI and following hexagonal architecture patterns for clean separation of concerns and adaptability. This backend service is responsible for handling order processing, reporting, bulk customer uploads, and authentication.
