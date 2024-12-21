@@ -94,6 +94,8 @@ To monitor asynchronous tasks using Celery, there is a dashboard implemented usi
 
     REDIS_HOST="redis"
     REDIS_PORT="6379"
+
+    JWT_SECRET_KEY="secret"
    ```
    Environment variables are used to manage configurations and secrets, sample structure provided in .env.example.
 
