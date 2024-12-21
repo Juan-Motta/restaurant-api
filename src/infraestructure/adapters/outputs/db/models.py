@@ -83,6 +83,7 @@ class UserModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     )
     first_name: Mapped[str] = mapped_column(sa.String(100))
     last_name: Mapped[str] = mapped_column(sa.String(100))
+    password: Mapped[str] = mapped_column(sa.String(255), nullable=True)
     email: Mapped[str] = mapped_column(sa.String(255))
     phone: Mapped[str] = mapped_column(sa.String(20))
     address: Mapped[str] = mapped_column(sa.String(255))

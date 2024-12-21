@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from src.application.services.auth import AuthService
 from src.application.services.menu_item import MenuItemService
 from src.application.services.order import OrderService
 from src.application.services.order_item import OrderItemService
@@ -14,6 +15,8 @@ from src.infraestructure.dependencies.repositories import (
     get_restaurant_repository,
     get_user_repository,
 )
+from src.infraestructure.utils.jwt import JWTManager
+from src.infraestructure.utils.password import PasswordManager
 
 
 def get_restaurant_service(session: Session) -> RestaurantService:
@@ -50,3 +53,15 @@ def get_rating_service(session: Session) -> RatingService:
     rating_repository = get_rating_repository(session=session)
     rating_service = RatingService(rating_repository=rating_repository)
     return rating_service
+
+
+def get_auth_service(session: Session) -> AuthService:
+    user_repository = get_user_repository(session=session)
+    password_manager = PasswordManager
+    jwt_manager = JWTManager
+    auth_service = AuthService(
+        user_repository=user_repository,
+        password_manager=password_manager,
+        jwt_manager=jwt_manager,
+    )
+    return auth_service

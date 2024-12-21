@@ -16,6 +16,12 @@ class IUserRepository:
     async def get_by_id(self, user_id: int) -> UserWithRelations | None:
         raise NotImplementedError
 
+    async def get_by_email(self, email: str) -> UserWithRelations | None:
+        raise NotImplementedError
+
+    async def get_password(self, user_id: int) -> str | None:
+        raise NotImplementedError
+
     async def create(self, data: UserBaseInput) -> UserWithRelations:
         raise NotImplementedError
 
@@ -23,4 +29,7 @@ class IUserRepository:
         raise NotImplementedError
 
     async def deactivate(self, user_id: int) -> UserWithRelations:
+        raise NotImplementedError
+
+    async def update_password(self, user_id: int, password: str) -> UserWithRelations:
         raise NotImplementedError

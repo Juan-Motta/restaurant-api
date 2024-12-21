@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from src.infraestructure.adapters.input.api.auth import router as auth_router
 from src.infraestructure.adapters.input.api.menu_item import router as menu_item_router
 from src.infraestructure.adapters.input.api.order import router as order_router
 from src.infraestructure.adapters.input.api.order_item import (
@@ -15,6 +16,7 @@ from src.infraestructure.adapters.input.api.user import router as user_router
 router_v1 = APIRouter(prefix="/api/v1")
 
 router_v1.include_router(root_router)
+router_v1.include_router(auth_router)
 router_v1.include_router(restaurant_router)
 router_v1.include_router(user_router)
 router_v1.include_router(menu_item_router)
@@ -50,5 +52,9 @@ METADATA = [
     {
         "name": "Ratings",
         "description": """Endpoints to manage ratings""",
+    },
+    {
+        "name": "Authentication",
+        "description": """Endpoints to manage authentication""",
     },
 ]

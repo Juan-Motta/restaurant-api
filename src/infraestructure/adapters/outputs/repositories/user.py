@@ -1,12 +1,10 @@
 from sqlalchemy import func, select
 from sqlalchemy import update as sql_update
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
 from src.domain.entities.user import UserBase, UserBaseInput, UserWithRelations
 from src.domain.repositories.user import IUserRepository
 from src.infraestructure.adapters.outputs.db.models import (
-    OrderModel,
-    RestaurantModel,
     UserModel,
 )
 
@@ -65,8 +63,24 @@ class UserRepository(IUserRepository):
             else None
         )
 
+    async def get_by_email(self, email: str) -> UserWithRelations | None:
+        query = select(UserModel).where(UserModel.email == email)
+        result = await self.session.execute(query)
+        user = result.scalars().first()
+        return (
+            UserWithRelations.model_validate(user, from_attributes=True)
+            if user
+            else None
+        )
+
+    async def get_password(self, user_id: int) -> str | None:
+        query = select(UserModel.password).where(UserModel.id == user_id)
+        result = await self.session.execute(query)
+        password = result.scalar()
+        return password
+
     async def create(self, user: UserBaseInput) -> UserWithRelations:
-        user_model = UserModel(**user.model_dump())
+        user_model = UserModel(**user.model_dump(), is_active=False)
         self.session.add(user_model)
         await self.session.commit()
         user_model = await self.get_by_id(user_model.id)
@@ -89,6 +103,18 @@ class UserRepository(IUserRepository):
             sql_update(UserModel)
             .where(UserModel.id == user_id)
             .values(is_active=False)
+            .execution_options(synchronize_session="fetch")
+        )
+        await self.session.execute(execute_update)
+        await self.session.commit()
+        user_model = await self.get_by_id(user_id)
+        return UserWithRelations.model_validate(user_model, from_attributes=True)
+
+    async def update_password(self, user_id: int, password: str) -> UserWithRelations:
+        execute_update = (
+            sql_update(UserModel)
+            .where(UserModel.id == user_id)
+            .values(password=password, is_active=True)
             .execution_options(synchronize_session="fetch")
         )
         await self.session.execute(execute_update)
