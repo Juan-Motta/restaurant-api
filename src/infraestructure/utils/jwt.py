@@ -41,3 +41,28 @@ class JWTManager:
         }
         token = jwt.encode(payload=payload, key="secret", algorithm="HS256")
         return token
+
+    def decode(cls, token: str) -> dict:
+        """
+        Decodes a JWT token into its payload.
+
+        This method decodes a given JWT token into its payload, which
+        contains the user's ID and security details.
+
+        Parameters:
+        ----------
+        token : str
+            The JWT token to decode.
+
+        Returns:
+        -------
+        dict
+            The decoded payload of the JWT token.
+        """
+        try:
+            payload = jwt.decode(token, key="secret", algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            payload = None
+        except jwt.InvalidTokenError:
+            payload = None
+        return payload
