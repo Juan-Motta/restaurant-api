@@ -164,3 +164,35 @@ class CategoryModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     restaurant: Mapped[list["RestaurantModel"]] = relationship(
         "RestaurantModel", back_populates="category"
     )
+
+
+class RoleModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+    __tablename__ = "roles"
+    name: Mapped[str] = mapped_column(sa.String(100))
+    slug: Mapped[str] = mapped_column(sa.String(100))
+    description: Mapped[str] = mapped_column(sa.String(255))
+
+
+class PermissionModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+    __tablename__ = "permissions"
+    name: Mapped[str] = mapped_column(sa.String(100))
+    slug: Mapped[str] = mapped_column(sa.String(100))
+    description: Mapped[str] = mapped_column(sa.String(255))
+
+
+class UserRoleModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+    __tablename__ = "user_roles"
+    user_id: Mapped[int] = mapped_column(sa.ForeignKey("users.id"))
+    role_id: Mapped[int] = mapped_column(sa.ForeignKey("roles.id"))
+
+
+class RolePermissionModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+    __tablename__ = "role_permissions"
+    role_id: Mapped[int] = mapped_column(sa.ForeignKey("roles.id"))
+    permission_id: Mapped[int] = mapped_column(sa.ForeignKey("permissions.id"))
+
+
+class UserPermissionModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
+    __tablename__ = "user_permissions"
+    user_id: Mapped[int] = mapped_column(sa.ForeignKey("users.id"))
+    permission_id: Mapped[int] = mapped_column(sa.ForeignKey("permissions.id"))
