@@ -4,6 +4,7 @@ from src.application.services.auth import AuthService
 from src.application.services.menu_item import MenuItemService
 from src.application.services.order import OrderService
 from src.application.services.order_item import OrderItemService
+from src.application.services.permission import PermissionService
 from src.application.services.rating import RatingService
 from src.application.services.restaurant import RestaurantService
 from src.application.services.user import UserService
@@ -11,6 +12,7 @@ from src.infraestructure.dependencies.repositories import (
     get_menu_item_repository,
     get_order_item_repository,
     get_order_repository,
+    get_permission_repository,
     get_rating_repository,
     get_restaurant_repository,
     get_user_repository,
@@ -65,3 +67,9 @@ def get_auth_service(session: Session) -> AuthService:
         jwt_manager=jwt_manager,
     )
     return auth_service
+
+
+def get_permission_service(session: Session) -> PermissionService:
+    permission_repository = get_permission_repository(session=session)
+    permission_service = PermissionService(permission_repository=permission_repository)
+    return permission_service

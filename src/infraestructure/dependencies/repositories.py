@@ -7,6 +7,9 @@ from src.infraestructure.adapters.outputs.repositories.order import OrderReposit
 from src.infraestructure.adapters.outputs.repositories.order_item import (
     OrderItemRepository,
 )
+from src.infraestructure.adapters.outputs.repositories.permissions import (
+    PermissionRepository,
+)
 from src.infraestructure.adapters.outputs.repositories.rating import RatingRepository
 from src.infraestructure.adapters.outputs.repositories.restaurant import (
     RestaurantRepository,
@@ -36,3 +39,7 @@ def get_order_item_repository(session: Session) -> OrderItemRepository:
 
 def get_rating_repository(session: Session) -> RatingRepository:
     return RatingRepository(session=session)
+
+
+def get_permission_repository(session: Session) -> PermissionRepository:
+    return PermissionRepository(session=session)

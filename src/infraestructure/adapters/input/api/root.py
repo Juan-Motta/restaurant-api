@@ -1,21 +1,22 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Header, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.domain.entities.user import UserBase
 from src.infraestructure.adapters.input.celery.dummy import dummy_task
 from src.infraestructure.adapters.outputs.db.session import get_async_session
-from src.infraestructure.utils.permission import get_permission
+from src.infraestructure.utils.permission import permissions
 
 router = APIRouter()
 
 
 @router.get("/")
+@permissions()
 async def root(
     request: Request,
+    authorization: str | None = Header(None),
     session: AsyncSession = Depends(get_async_session),
-    user: UserBase = Depends(get_permission("root:read")),
+    context: dict = None,
 ):
-    return {"message": "OK"}
+    return {"message": "OK", "context": context}
 
 
 @router.get("/dummy-task")
