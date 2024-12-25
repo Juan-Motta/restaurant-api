@@ -8,6 +8,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from src.domain.constants.enums import (
     CategoryTypologyEnum,
     OrderStatusEnum,
+    PermissionActionEnum,
+    PermissionOwnerEnum,
+    PermissionResourceEnum,
     RestaurantStatusEnum,
     UserTypologyEnum,
 )
@@ -176,8 +179,31 @@ class RoleModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
 class PermissionModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "permissions"
     name: Mapped[str] = mapped_column(sa.String(100))
-    slug: Mapped[str] = mapped_column(sa.String(100))
-    description: Mapped[str] = mapped_column(sa.String(255))
+    resource: Mapped[PermissionResourceEnum] = mapped_column(
+        sa.Enum(
+            PermissionResourceEnum,
+            native_enum=False,
+            validate_strings=True,
+            values_callable=lambda x: [e.value for e in x],
+        )
+    )
+    owner: Mapped[PermissionOwnerEnum] = mapped_column(
+        sa.Enum(
+            PermissionOwnerEnum,
+            native_enum=False,
+            validate_strings=True,
+            values_callable=lambda x: [e.value for e in x],
+        )
+    )
+    action: Mapped[PermissionActionEnum] = mapped_column(
+        sa.Enum(
+            PermissionActionEnum,
+            native_enum=False,
+            validate_strings=True,
+            values_callable=lambda x: [e.value for e in x],
+        )
+    )
+    description: Mapped[Optional[str]] = mapped_column(sa.String(255))
 
 
 class UserRoleModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):

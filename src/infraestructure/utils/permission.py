@@ -8,7 +8,9 @@ from src.infraestructure.utils.jwt import JWTManager
 logger = logging.getLogger(__name__)
 
 
-def permissions(*args_1):
+def permissions(
+    action: str | None = None, owner: str | None = None, resource: str | None = None
+):
     """
     Checks user permissions and enforces access control for the decorated function.
 
@@ -45,12 +47,22 @@ def permissions(*args_1):
     def decorator(func):
         @wraps(func)
         async def wrapper(*args_2, **kwargs_2):
-            # Extract the authorization token and session from fastapi decorated 
+            # Extract the authorization token and session from fastapi decorated
             # function arguments
             kwargs_2["context"] = {}
             session = kwargs_2["session"]
             authorization_token = kwargs_2["authorization"]
-            required_permissions = args_1
+
+            # Check if the config defined in the decorator is valid (all parameters defined or none)
+            if not (action and owner and resource) or not (
+                not action and not owner and not resource
+            ):
+                raise ValueError("Invalid permissions")
+
+            if action and owner and resource:
+                required_permissions = f"{action}:{owner}:{resource}".upper()
+            else:
+                required_permissions = None
 
             # Initialize the JWT manager and permission service
             jwt_manager = JWTManager()
@@ -58,7 +70,7 @@ def permissions(*args_1):
 
             authorization_payload = jwt_manager.decode(token=authorization_token)
 
-            # If no authorization payload or required permissions are provided, 
+            # If no authorization payload or required permissions are provided,
             # execute the decorated function
             if not authorization_payload and not required_permissions:
                 return await func(*args_2, **kwargs_2)

@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.get("/")
-@permissions()
+@permissions(resource="root", action="read", owner="any")
 async def root(
     request: Request,
     authorization: str | None = Header(None),
