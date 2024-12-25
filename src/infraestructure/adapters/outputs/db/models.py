@@ -54,11 +54,11 @@ class RestaurantModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
 class MenuItemModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "menu_items"
     name: Mapped[str] = mapped_column(sa.String(255))
-    description: Mapped[str] = mapped_column(sa.String(255))
+    description: Mapped[Optional[str]] = mapped_column(sa.String(255))
     price: Mapped[Decimal] = mapped_column(sa.Numeric(10, 2))
     preparation_time: Mapped[int]
     available: Mapped[bool]
-    image_url: Mapped[str] = mapped_column(sa.String(255))
+    image_url: Mapped[Optional[str]] = mapped_column(sa.String(255))
 
     category_id: Mapped[int] = mapped_column(sa.ForeignKey("categories.id"))
     category: Mapped["CategoryModel"] = relationship(
@@ -127,7 +127,7 @@ class OrderModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
 class RatingModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "ratings"
     rating: Mapped[Decimal] = mapped_column(sa.Numeric(3, 2))
-    comment: Mapped[str] = mapped_column(sa.String(255))
+    comment: Mapped[Optional[str]] = mapped_column(sa.String(255))
 
     order_id: Mapped[int] = mapped_column(sa.ForeignKey("orders.id"))
     order: Mapped["OrderModel"] = relationship(back_populates="rating")
@@ -138,7 +138,7 @@ class OrderItemModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     quantity: Mapped[int]
     sub_total: Mapped[Decimal] = mapped_column(sa.Numeric(10, 2))
     total: Mapped[Decimal] = mapped_column(sa.Numeric(10, 2))
-    notes: Mapped[str] = mapped_column(sa.String(255))
+    notes: Mapped[Optional[str]] = mapped_column(sa.String(255))
 
     order_id: Mapped[int] = mapped_column(sa.ForeignKey("orders.id"))
     order: Mapped["OrderModel"] = relationship(back_populates="order_items")
@@ -150,7 +150,7 @@ class OrderItemModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
 class CategoryModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "categories"
     name: Mapped[str] = mapped_column(sa.String(100))
-    description: Mapped[str] = mapped_column(sa.String(255))
+    description: Mapped[Optional[str]] = mapped_column(sa.String(255))
     typology: Mapped[Optional[CategoryTypologyEnum]] = mapped_column(
         sa.Enum(
             CategoryTypologyEnum,
@@ -173,7 +173,7 @@ class RoleModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "roles"
     name: Mapped[str] = mapped_column(sa.String(100))
     slug: Mapped[str] = mapped_column(sa.String(100))
-    description: Mapped[str] = mapped_column(sa.String(255))
+    description: Mapped[Optional[str]] = mapped_column(sa.String(255))
 
 
 class PermissionModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
