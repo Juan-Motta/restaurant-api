@@ -10,8 +10,7 @@ This API serves as the backend for a restaurant order management system, built w
 
 ### Data Model
 
-<img width="1090" alt="image" src="https://github.com/user-attachments/assets/089f4f56-0046-4bb1-81f9-133d2367908a">
-
+![image](https://github.com/user-attachments/assets/2504e379-cc01-48a8-8f3c-005471f018c5)
 
 ## Technical Stack
 
