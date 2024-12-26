@@ -6,6 +6,7 @@ from src.domain.entities.auth import (
     AuthUserBase,
 )
 from src.domain.exceptions.auth import AuthenticationError
+from src.domain.repositories.permission import IPermissionRepository
 from src.domain.repositories.user import IUserRepository
 from src.domain.utils.jwt import IJWTManager
 from src.domain.utils.password import IPasswordManager
@@ -33,10 +34,12 @@ class AuthService:
     def __init__(
         self,
         user_repository: IUserRepository,
+        permission_repository: IPermissionRepository,
         password_manager: IPasswordManager,
         jwt_manager: IJWTManager,
     ):
         self.user_repository = user_repository
+        self.permission_repository = permission_repository
         self.password_manager = password_manager
         self.jwt_manager = jwt_manager
 
@@ -92,11 +95,63 @@ class AuthService:
         logger.info(f"Generating token for user with email {user.email}")
 
         auth_user = AuthUserBase.model_validate(user, from_attributes=True)
-        auth_user.access_token = self.jwt_manager.encode(user_id=user.id)
+        user_roles = await self.permission_repository.get_roles_by_user_id(
+            user_id=user.id
+        )
+        user_permissions = await self.permission_repository.get_all_by_user_id(
+            user_id=user.id
+        )
+        auth_user.roles = [role.slug for role in user_roles] if user_roles else []
+        auth_user.permissions = [
+            permission.permission for permission in user_permissions
+        ]
+        auth_user.access_token = self.jwt_manager.encode(
+            user_id=auth_user.id,
+            roles=auth_user.roles,
+            permissions=auth_user.permissions,
+        )
 
         logger.info(f"User with email {user.email} authenticated successfully")
 
         return auth_user
+
+    async def get_permissions(self, user_id: int) -> list[str]:
+        """
+        Retrieves a list of permissions assigned to a user.
+
+        This method retrieves all permissions assigned to a user based on their
+        user ID. It queries the permission repository to fetch the permissions
+        and returns them as a list of strings.
+
+        Parameters:
+        ----------
+        user_id : int
+            The unique identifier of the user to retrieve permissions for.
+
+        Returns:
+        -------
+        list[str]
+            A list of permission names assigned to the user.
+
+        Raises:
+        -------
+        AuthenticationError
+            If the user is not found or if no permissions are assigned.
+        """
+        logger.info(f"Retrieving permissions for user with ID {user_id}")
+
+        user_permissions = await self.permission_repository.get_all_by_user_id(
+            user_id=user_id
+        )
+
+        permissions_names = [
+            f"{permission.action}:{permission.owner}:{permission.resource}"
+            for permission in user_permissions
+        ]
+
+        logger.info(f"Permissions retrieved for user with ID {user_id}")
+
+        return list(set(permissions_names))
 
     async def create_password(self, data: AuthCreatePasswordInput) -> AuthUserBase:
         """

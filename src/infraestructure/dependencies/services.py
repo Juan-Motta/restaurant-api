@@ -59,10 +59,12 @@ def get_rating_service(session: Session) -> RatingService:
 
 def get_auth_service(session: Session) -> AuthService:
     user_repository = get_user_repository(session=session)
+    permission_repository = get_permission_repository(session=session)
     password_manager = PasswordManager
     jwt_manager = JWTManager
     auth_service = AuthService(
         user_repository=user_repository,
+        permission_repository=permission_repository,
         password_manager=password_manager,
         jwt_manager=jwt_manager,
     )

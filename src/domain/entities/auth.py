@@ -11,6 +11,8 @@ class AuthUserBase(BaseModel):
     phone: str
     address: str
     restaurant_id: int
+    roles: list[str] | None = None
+    permissions: list[str] | None = None
     access_token: str | None = None
 
     model_config = ConfigDict(from_attributes=True)

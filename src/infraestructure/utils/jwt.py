@@ -1,8 +1,11 @@
+import logging
 from datetime import datetime, timedelta, timezone
 
 import jwt
 
 from src.infraestructure.commons.settings.base import settings
+
+logger = logging.getLogger(__name__)
 
 
 class JWTManager:
@@ -10,6 +13,8 @@ class JWTManager:
     def encode(
         cls,
         user_id: int,
+        roles: list[str] | None = None,
+        permissions: list[str] | None = None,
         exp: datetime | None = None,
         nbf: datetime | None = None,
         iat: datetime | None = None,
@@ -30,16 +35,25 @@ class JWTManager:
         str
             The generated JWT token as a string.
         """
-        exp = exp or datetime.now(timezone.utc) + timedelta(hours=1)
-        nbf = nbf or datetime.now(timezone.utc) + timedelta(hours=1)
+        exp = exp or datetime.now(timezone.utc) + timedelta(
+            minutes=settings.JWT_EXPIRATION
+        )
+        nbf = nbf or datetime.now(timezone.utc) + timedelta(
+            minutes=settings.JWT_NOT_BEFORE
+        )
         iat = iat or datetime.now(timezone.utc)
         payload = {
             "user_id": user_id,
+            "roles": roles or [],
+            "permissions": permissions or [],
             "exp": exp,
             "nbf": nbf,
             "iat": iat,
         }
-        token = jwt.encode(payload=payload, key="secret", algorithm="HS256")
+        logger.info(f"Generating JWT token {payload} for user with ID {user_id}")
+        token = jwt.encode(
+            payload=payload, key=settings.JWT_SECRET_KEY, algorithm="HS256"
+        )
         return token
 
     def decode(cls, token: str) -> dict:
@@ -60,9 +74,13 @@ class JWTManager:
             The decoded payload of the JWT token.
         """
         try:
-            payload = jwt.decode(token, key="secret", algorithms=["HS256"])
-        except jwt.ExpiredSignatureError:
+            payload = jwt.decode(
+                jwt=token, key=settings.JWT_SECRET_KEY, algorithms="HS256"
+            )
+        except jwt.ExpiredSignatureError as e:
+            logger.exception(e)
             payload = None
-        except jwt.InvalidTokenError:
+        except jwt.InvalidTokenError as e:
+            logger.exception(e)
             payload = None
         return payload

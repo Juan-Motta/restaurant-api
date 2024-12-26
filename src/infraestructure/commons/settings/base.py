@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 6379
 
     JWT_SECRET_KEY: str = "secret"
+    JWT_EXPIRATION: int = 600
+    JWT_NOT_BEFORE: int = 0
 
     @property
     def DB_URL(self) -> str:
