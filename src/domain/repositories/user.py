@@ -2,7 +2,7 @@ from src.domain.entities.user import UserBase, UserBaseInput, UserWithRelations
 
 
 class IUserRepository:
-    async def count_all(self) -> int:
+    async def count_all(self, filters: dict | None = None) -> int:
         raise NotImplementedError
 
     async def get_all(

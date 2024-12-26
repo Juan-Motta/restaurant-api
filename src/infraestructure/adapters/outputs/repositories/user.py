@@ -13,12 +13,28 @@ class UserRepository(IUserRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    async def count_all(self):
+    async def count_all(self, filters: dict | None = None):
         query = (
             select(func.count())
             .select_from(UserModel)
             .where(UserModel.is_active == True)
         )
+        if filters and filters.get("id"):
+            query = query.where(UserModel.id == filters.get("id"))
+        if filters and filters.get("first_name"):
+            query = query.where(UserModel.name.ilike(f'%{filters.get("first_name")}%'))
+        if filters and filters.get("last_name"):
+            query = query.where(UserModel.name.ilike(f'%{filters.get("last_name")}%'))
+        if filters and filters.get("email"):
+            query = query.where(UserModel.email.ilike(f'%{filters.get("email")}%'))
+        if filters and filters.get("phone"):
+            query = query.where(UserModel.phone.ilike(f'%{filters.get("phone")}%'))
+        if filters and filters.get("address"):
+            query = query.where(UserModel.address.ilike(f'%{filters.get("address")}%'))
+        if filters and filters.get("restaurant_id"):
+            query = query.where(UserModel.restaurant_id == filters.get("restaurant_id"))
+        if filters and filters.get("is_active") in (True, False):
+            query = query.where(UserModel.is_active == filters.get("is_active"))
         result = await self.session.execute(query)
         return result.scalar()
 

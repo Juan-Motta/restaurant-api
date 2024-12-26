@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PermissionBase(BaseModel):
@@ -12,7 +12,7 @@ class PermissionBase(BaseModel):
 
     @property
     def permission(self):
-        return f"{self.resource.lower()}:{self.action.lower()}:{self.owner.lower()}"
+        return f"{self.action.lower()}:{self.owner.lower()}:{self.resource.lower()}"
 
 
 class RoleBase(BaseModel):
@@ -21,3 +21,9 @@ class RoleBase(BaseModel):
     slug: str
     description: str | None = None
     is_active: bool
+
+
+class Context(BaseModel):
+    user_id: int | None = None
+    owners: list[str] = Field(default_factory=list)
+    roles: list[str] = Field(default_factory=list)

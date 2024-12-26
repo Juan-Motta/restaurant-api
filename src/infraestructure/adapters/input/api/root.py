@@ -3,13 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.infraestructure.adapters.input.celery.dummy import dummy_task
 from src.infraestructure.adapters.outputs.db.session import get_async_session
-from src.infraestructure.utils.permission import permissions
 
 router = APIRouter()
 
 
 @router.get("/")
-@permissions(resource="users", action="read", owner="any")
 async def root(
     request: Request,
     authorization: str | None = Header(None),

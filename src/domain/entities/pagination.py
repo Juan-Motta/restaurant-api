@@ -7,12 +7,12 @@ T = TypeVar("T", bound=BaseModel)
 
 class Page(BaseModel, Generic[T]):
     data: list[T] | None = None
-    size: int
-    page: int
-    pages: int
-    total: int
-    has_next: bool
-    has_previous: bool
+    size: int = 0
+    page: int = 1
+    pages: int = 1
+    total: int = 0
+    has_next: bool = False
+    has_previous: bool = False
 
 
 def paginate(data: list[T], page: int, size: int, total: int) -> Page[T]:

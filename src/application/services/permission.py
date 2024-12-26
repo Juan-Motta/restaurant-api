@@ -8,4 +8,7 @@ class PermissionService:
     async def has_permission(
         self, user_permissions: list[str], required_permissions: list[str]
     ) -> bool:
-        return bool(set(user_permissions) & set(required_permissions))
+        if not required_permissions:
+            return True
+        else:
+            return bool(set(user_permissions) & set(required_permissions))

@@ -10,7 +10,7 @@ class UserService:
     async def get_all(
         self, page: int = 1, size: int = 10, filters: dict | None = None
     ) -> Page[UserBase]:
-        all_users_count = await self.user_repository.count_all()
+        all_users_count = await self.user_repository.count_all(filters=filters)
         users = await self.user_repository.get_all(
             page=page, size=size, filters=filters
         )

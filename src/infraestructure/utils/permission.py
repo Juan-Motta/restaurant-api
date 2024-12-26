@@ -1,78 +1,13 @@
 import logging
 from functools import wraps
 
+from src.domain.entities.permission import Context
 from src.domain.exceptions.permission import PermissionError
+from src.domain.permissions.base import PermissionBase
 from src.infraestructure.dependencies.services import get_permission_service
 from src.infraestructure.utils.jwt import JWTManager
 
 logger = logging.getLogger(__name__)
-
-
-def _validate_permissions_config(
-    action: str | None, owner: str | None, resource: str | None
-):
-    """
-    Validates the configuration of permissions parameters.
-
-    This function checks that either all of the action, owner, and resource
-    parameters are provided or none one of them are defined. If the
-    parameters are not in a valid state, a ValueError is raised.
-
-    Parameters
-    ----------
-    action : str | None
-        The action associated with the permission. Can be None.
-
-    owner : str | None
-        The owner of the resource. Can be None.
-
-    resource : str | None
-        The resource that the action will be applied to. Can be None.
-
-    Raises
-    ------
-    ValueError
-        If the parameters do not meet the validation criteria.
-    """
-    all_params_defined = (
-        action is not None and owner is not None and resource is not None
-    )
-    no_params_defined = not (action is None and owner is None and resource is None)
-
-    if not all_params_defined or not no_params_defined:
-        raise ValueError("Invalid permissions configuration")
-
-
-def _format_required_permissions(action: str, owner: str, resource: str) -> str:
-    """
-    Formats required permissions into a standardized string.
-
-    This function generates a string representing the required permissions
-    in the format "ACTION:OWNER:RESOURCE", with all characters
-    converted to uppercase. If any of the parameters are not provided,
-    None is returned instead.
-
-    Parameters
-    ----------
-    action : str
-        The action that needs permission.
-
-    owner : str
-        The owner of the resource.
-
-    resource : str
-        The resource that the action will be applied to.
-
-    Returns
-    -------
-    str | None
-        A formatted permission string in uppercase or None if parameters are missing.
-    """
-    if action and owner and resource:
-        required_permissions = f"{action}:{owner}:{resource}".upper()
-    else:
-        required_permissions = None
-    return required_permissions
 
 
 def _validate_token_format(token: str) -> str:
@@ -139,9 +74,7 @@ def _get_token_payload(token: str) -> dict:
     return authorization_payload
 
 
-def permissions(
-    action: str | None = None, owner: str | None = None, resource: str | None = None
-):
+def permission_classes(*args_1: list[PermissionBase]):
     """
     Checks user permissions and enforces access control for the decorated function.
 
@@ -178,18 +111,13 @@ def permissions(
     def decorator(func):
         @wraps(func)
         async def wrapper(*args_2, **kwargs_2):
-            kwargs_2["context"] = {}
+            kwargs_2["context"] = Context()
             session = kwargs_2["session"]
             authorization_token = kwargs_2["authorization"]
+            required_permissions = [permission.format() for permission in args_1]
 
-            _validate_permissions_config(action, owner, resource)
-            required_permissions = _format_required_permissions(action, owner, resource)
-
-            if required_permissions is not None and not authorization_token:
+            if not authorization_token:
                 raise PermissionError("Token not found")
-
-            if required_permissions is None and authorization_token is None:
-                return await func(*args_2, **kwargs_2)
 
             authorization_token = _validate_token_format(authorization_token)
             authorization_payload = _get_token_payload(authorization_token)
@@ -197,14 +125,14 @@ def permissions(
             user_permissions = authorization_payload["permissions"]
             user_id = authorization_payload["user_id"]
 
-            kwargs_2["context"]["user_id"] = user_id
-            kwargs_2["context"]["permissions"] = user_permissions
-            kwargs_2["context"]["roles"] = authorization_payload["roles"]
+            kwargs_2["context"].user_id = user_id
+            kwargs_2["context"].owners = [permission.owner for permission in args_1]
+            kwargs_2["context"].roles = authorization_payload["roles"]
 
             logger.info(f"Checking permissions for {user_id}")
 
             permission_service = get_permission_service(session=session)
-            has_permissions = permission_service.has_permission(
+            has_permissions = await permission_service.has_permission(
                 user_permissions=user_permissions,
                 required_permissions=required_permissions,
             )

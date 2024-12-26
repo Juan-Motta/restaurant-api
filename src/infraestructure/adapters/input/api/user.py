@@ -1,13 +1,17 @@
 import logging
 
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, Header, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.domain.constants.enums import PermissionOwnerEnum
 from src.domain.entities.pagination import Page
+from src.domain.entities.permission import Context
 from src.domain.entities.user import UserBase, UserBaseInput, UserWithRelations
 from src.domain.filters.user import UserFilter
+from src.domain.permissions.user import ReadAnyUsers, ReadOwnUsers
 from src.infraestructure.adapters.outputs.db.session import get_async_session
 from src.infraestructure.dependencies.services import get_user_service
+from src.infraestructure.utils.permission import permission_classes
 
 logger = logging.getLogger(__name__)
 
@@ -15,18 +19,27 @@ router = APIRouter(tags=["Users"])
 
 
 @router.get("/users", response_model=Page[UserBase])
+@permission_classes(ReadAnyUsers, ReadOwnUsers)
 async def get_all_users(
     request: Request,
+    authorization: str | None = Header(None),
     page: int = Query(default=1, ge=1),
     size: int = Query(default=10, ge=0),
     session: AsyncSession = Depends(get_async_session),
     filters: UserFilter = Depends(UserFilter),
+    context: Context = None,
 ) -> Page[UserBase]:
     logger.info("Getting all users..")
     service = get_user_service(session=session)
-    response = await service.get_all(
-        page=page, size=size, filters=filters.model_dump(exclude_none=True)
-    )
+    if PermissionOwnerEnum.ANY.value in context.owners:
+        response = await service.get_all(
+            page=page, size=size, filters=filters.model_dump(exclude_none=True)
+        )
+    else:
+        filters.id = context.user_id
+        response = await service.get_all(
+            page=page, size=size, filters=filters.model_dump(exclude_none=True)
+        )
     return response
 
 
