@@ -19,6 +19,7 @@ from src.infraestructure.adapters.outputs.db.mixins import (
     IntegerIdMixin,
     IsActiveMixin,
     TimestampMixin,
+    UUIDIdMixin,
 )
 
 
@@ -222,3 +223,10 @@ class UserPermissionModel(IntegerIdMixin, TimestampMixin, IsActiveMixin, Base):
     __tablename__ = "user_permissions"
     user_id: Mapped[int] = mapped_column(sa.ForeignKey("users.id"))
     permission_id: Mapped[int] = mapped_column(sa.ForeignKey("permissions.id"))
+
+
+class UserSessionModel(UUIDIdMixin, TimestampMixin, IsActiveMixin, Base):
+    __tablename__ = "user_sessions"
+    user_id: Mapped[int] = mapped_column(sa.ForeignKey("users.id"))
+    expires_at: Mapped[datetime] = mapped_column(sa.DateTime(timezone=True))
+    is_active: Mapped[bool] = mapped_column(sa.Boolean, default=True)
